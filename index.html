@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игры Будущего 2026 — обратный отсчёт</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Orbitron', sans-serif;
+            background: #0a0f1e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(255, 0, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(255, 0, 255, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 30px 50px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 40px;
+            background: rgba(10, 15, 30, 0.5);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.3), inset 0 0 30px rgba(255, 0, 255, 0.2);
+            animation: borderPulse 3s infinite alternate;
+        }
+
+        @keyframes borderPulse {
+            0% { border-color: rgba(0, 255, 255, 0.3); box-shadow: 0 0 40px rgba(0, 255, 255, 0.2); }
+            100% { border-color: rgba(255, 0, 255, 0.6); box-shadow: 0 0 80px rgba(255, 0, 255, 0.4); }
+        }
+
+        .title {
+            font-size: clamp(2rem, 8vw, 4rem);
+            font-weight: 700;
+            text-shadow: 0 0 20px cyan, 0 0 40px magenta;
+            margin-bottom: 0.5em;
+            animation: textGlitch 4s infinite;
+        }
+
+        @keyframes textGlitch {
+            0% { text-shadow: 0 0 20px cyan, 0 0 40px magenta; }
+            25% { text-shadow: -3px 0 magenta, 3px 0 cyan; }
+            50% { text-shadow: 0 0 30px cyan, 0 0 60px magenta; }
+            75% { text-shadow: 3px 0 magenta, -3px 0 cyan; }
+            100% { text-shadow: 0 0 20px cyan, 0 0 40px magenta; }
+        }
+
+        .timer {
+            font-size: clamp(2.5rem, 12vw, 6rem);
+            font-weight: 900;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 0.3em;
+            color: #fff;
+            text-shadow: 0 0 30px #0ff, 0 0 60px #f0f;
+            flex-wrap: wrap;
+        }
+
+        .timer span {
+            display: inline-block;
+            min-width: 1.5em;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.1em 0.2em;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 0 15px rgba(0, 255, 255, 0.3);
+            animation: digitPulse 2s infinite alternate;
+        }
+
+        @keyframes digitPulse {
+            0% { border-color: rgba(0, 255, 255, 0.5); }
+            100% { border-color: rgba(255, 0, 255, 0.8); }
+        }
+
+        .labels {
+            font-size: clamp(1rem, 4vw, 2rem);
+            margin-left: 0.3rem;
+            margin-right: 0.8rem;
+            color: #ccc;
+            text-shadow: 0 0 15px cyan;
+        }
+
+        .labels:last-of-type {
+            margin-right: 0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            .timer {
+                gap: 0.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">До Игр Будущего 2026 осталось</div>
+        <div class="timer">
+            <span id="days">00</span> <span class="labels">дней</span>
+            <span id="hours">00</span> <span class="labels">часов</span>
+            <span id="minutes">00</span> <span class="labels">минут</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // Целевая дата: 15 августа 2026, 00:00 по местному времени
+            const targetDate = new Date(2026, 7, 15); // месяц 7 = август (0-индексация)
+
+            function formatNumber(num) {
+                return num < 10 ? '0' + num : num;
+            }
+
+            function updateTimer() {
+                const now = new Date();
+                const diff = targetDate - now; // миллисекунды
+
+                if (diff <= 0) {
+                    document.getElementById('days').textContent = '00';
+                    document.getElementById('hours').textContent = '00';
+                    document.getElementById('minutes').textContent = '00';
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+                document.getElementById('days').textContent = formatNumber(days);
+                document.getElementById('hours').textContent = formatNumber(hours);
+                document.getElementById('minutes').textContent = formatNumber(minutes);
+            }
+
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        })();
+    </script>
+</body>
+</html>

@@ -13,12 +13,12 @@ body{
     height:100vh;
     overflow:hidden;
     display:flex;
-    align-items:center;
+    align-items:flex-start;  /* прижимаем к верху */
     justify-content:center;
     font-family:'Orbitron', sans-serif;
     color:#fff;
     position:relative;
-    background:#070b18; /* запасной фон */
+    background:#070b18;
 }
 
 /* ===================== ФОН — ВАША КАРТИНКА ===================== */
@@ -32,99 +32,92 @@ body{
     background-repeat:no-repeat;
 }
 
-
 /* ===================== КОНТЕЙНЕР С ТАЙМЕРОМ ===================== */
 .container{
     position:relative;
     z-index:10;
     text-align:center;
-    padding:40px 60px;
+    padding:30px 50px;
     border:1px solid rgba(0,255,255,0.4);
     border-radius:40px;
-    backdrop-filter:blur(12px);
-    background:rgba(10,15,35,0.35);
+    backdrop-filter:blur(4px);
+    background:rgba(10,15,35,0.2);
     box-shadow:0 0 40px rgba(0,255,255,0.4);
+    
+    /* Сдвигаем в нижнюю треть экрана */
+    margin-top: 60vh;  /* 60% высоты экрана сверху = нижняя треть */
+}
+
+/* Адаптация для разных экранов */
+@media (max-height: 800px) {
+    .container {
+        margin-top: 55vh;
+        padding: 25px 40px;
+    }
+}
+
+@media (max-height: 600px) {
+    .container {
+        margin-top: 50vh;
+        padding: 20px 30px;
+    }
 }
 
 .title{
-    font-size:clamp(2rem,6vw,4rem);
-    margin-bottom:25px;
-    text-shadow:0 0 20px cyan,0 0 40px magenta;
+    font-size:clamp(1.8rem,5vw,3.5rem);
+    margin-bottom:20px;
+    text-shadow:0 0 15px cyan,0 0 30px magenta;
 }
 
 .timer{
-    font-size:clamp(3rem,8vw,6rem);
+    font-size:clamp(2.8rem,7vw,5rem);
     font-weight:800;
     display:flex;
-    gap:0.5em;
+    gap:0.3em;
     justify-content:center;
     flex-wrap:wrap;
+    align-items:center;
 }
 
+/* ===== КОМПАКТНЫЕ ПУЗЫРИ ===== */
 .timer span{
+    display:inline-block;
     background:rgba(0,0,0,0.4);
-    padding:0.2em 0.3em;
-    border-radius:20px;
-    box-shadow:0 0 15px rgba(0,255,255,0.4) inset;
+    padding:0.05em 0.3em;
+    border-radius:15px;
+    box-shadow:0 0 10px rgba(0,255,255,0.4) inset;
+    min-width:auto;
+    width:auto;
+    line-height:1.2;
+    vertical-align:middle;
 }
 
+/* Подписи */
 .labels{
-    font-size:clamp(1rem,2vw,1.5rem);
-    color:#aaa;
+    font-size:clamp(0.9rem,1.8vw,1.3rem);
+    color:#ccc;
+    margin-left:0.1rem;
     margin-right:1rem;
+    background:transparent !important;
+    box-shadow:none !important;
+    padding:0 !important;
+    display:inline-block;
+    line-height:1.2;
+    vertical-align:middle;
 }
 
-/* ===================== SVG СТИЛИ ===================== */
-svg{
-    fill:none;
-    stroke:currentColor;
-    stroke-width:3;
-    stroke-linecap:round;
-    stroke-linejoin:round;
+.labels:last-of-type {
+    margin-right:0;
 }
+
+/* ===================== SVG СТИЛИ (УДАЛЕНЫ) ===================== */
+/* Весь блок .players полностью удалён */
 </style>
 </head>
 <body>
 
 <!-- Ваша картинка на фоне -->
 <div class="bg-custom"></div>
-
-<!-- Спортсмены (SVG) -->
-<div class="players">
-    <svg class="player football" viewBox="0 0 300 500">
-        <path d="M150 60 C130 60 120 90 120 110 C120 140 180 140 180 110 C180 90 170 60 150 60 Z"/>
-        <path d="M150 140 L150 260"/>
-        <path d="M150 170 C120 190 100 210 80 240"/>
-        <path d="M150 170 C180 190 200 210 220 240"/>
-        <path d="M150 260 C130 310 120 360 110 430"/>
-        <path d="M150 260 C170 310 190 360 210 420"/>
-        <circle cx="95" cy="430" r="18"/>
-    </svg>
-    <svg class="player basket" viewBox="0 0 300 500">
-        <path d="M150 70 C130 70 120 100 150 120 C180 100 170 70 150 70 Z"/>
-        <path d="M150 120 L150 260"/>
-        <path d="M150 160 C190 130 220 110 240 100"/>
-        <circle cx="255" cy="95" r="22"/>
-        <path d="M150 160 C120 200 100 230 90 260"/>
-        <path d="M150 260 C130 330 120 390 115 460"/>
-        <path d="M150 260 C180 330 200 390 220 450"/>
-    </svg>
-    <svg class="player cyber" viewBox="0 0 400 400">
-        <path d="M200 90 C170 90 160 130 200 150 C240 130 230 90 200 90 Z"/>
-        <rect x="150" y="150" width="100" height="80" rx="15"/>
-        <rect x="110" y="240" width="180" height="20" rx="10"/>
-        <path d="M200 230 L180 300"/>
-        <path d="M200 230 L220 300"/>
-    </svg>
-    <svg class="player hockey" viewBox="0 0 300 500">
-        <path d="M150 60 C130 60 120 90 150 110 C180 90 170 60 150 60 Z"/>
-        <path d="M150 110 L150 250"/>
-        <path d="M150 160 C120 180 90 210 70 240"/>
-        <path d="M150 250 C120 320 110 380 100 450"/>
-        <path d="M150 250 C170 300 200 350 220 420"/>
-        <path d="M250 180 L250 420 L230 450"/>
-    </svg>
-</div>
 
 <!-- Таймер -->
 <div class="container">

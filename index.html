@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Игры Будущего 2026 — обратный отсчёт</title>
+
+<!-- ===== МЕТА-ТЕГИ ДЛЯ БОРЬБЫ СО СКРИНСЕЙВЕРОМ ===== -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
 <style>
 /* ===== ПОДКЛЮЧАЕМ ВАШ ШРИФТ ===== */
@@ -22,24 +28,12 @@ body{
     height:100vh;
     overflow:hidden;
     display:flex;
-    align-items:flex-start;
+    align-items:flex-start;  /* прижимаем к верху */
     justify-content:center;
-    font-family:'PHGTL', 'Orbitron', sans-serif;
+    font-family:'PHGTL', 'Orbitron', sans-serif;  /* Ваш шрифт теперь первый */
     color:#fff;
     position:relative;
     background:#070b18;
-}
-
-/* ===================== АНТИ-СКРИНСЕЙВЕР (видео 1×1 пиксель) ===================== */
-.anti-screensaver {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    width: 1px;
-    height: 1px;
-    opacity: 0.01; /* почти невидимый */
-    pointer-events: none;
-    z-index: 9999;
 }
 
 /* ===================== ФОН — ВАША КАРТИНКА ===================== */
@@ -66,14 +60,22 @@ body{
     box-shadow:0 0 40px rgba(0,255,255,0.4);
     
     /* Сдвигаем в нижнюю треть экрана */
-    margin-top: 60vh;
+    margin-top: 60vh;  /* 60% высоты экрана сверху = нижняя треть */
 }
 
+/* Адаптация для разных экранов */
 @media (max-height: 800px) {
-    .container { margin-top: 55vh; padding: 25px 40px; }
+    .container {
+        margin-top: 55vh;
+        padding: 25px 40px;
+    }
 }
+
 @media (max-height: 600px) {
-    .container { margin-top: 50vh; padding: 20px 30px; }
+    .container {
+        margin-top: 50vh;
+        padding: 20px 30px;
+    }
 }
 
 .title{
@@ -92,6 +94,7 @@ body{
     align-items:center;
 }
 
+/* ===== КОМПАКТНЫЕ ПУЗЫРИ ===== */
 .timer span{
     display:inline-block;
     background:rgba(0,0,0,0.4);
@@ -104,6 +107,7 @@ body{
     vertical-align:middle;
 }
 
+/* Подписи */
 .labels{
     font-size:clamp(0.9rem,1.8vw,1.3rem);
     color:#fff;
@@ -117,17 +121,12 @@ body{
     vertical-align:middle;
 }
 
-.labels:last-of-type { margin-right:0; }
+.labels:last-of-type {
+    margin-right:0;
+}
 </style>
 </head>
 <body>
-
-<!-- ===== АНТИ-СКРИНСЕЙВЕР ===== -->
-<div class="anti-screensaver">
-    <video id="dummyVideo" width="1" height="1" muted loop autoplay playsinline>
-        <source src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAAQhtZGF0AAAAMQACuQGVFhT1XWmCG3VpM1BGRiYJAgYD4T1LhTZfNSZ+U4MhG5yRVVq0P+0TyP//F/+cAAAEAA===" type="video/mp4">
-    </video>
-</div>
 
 <!-- Ваша картинка на фоне -->
 <div class="bg-custom"></div>
@@ -143,44 +142,65 @@ body{
 </div>
 
 <script>
-(function(){
-// Дополнительный скрипт для гарантии работы видео на webOS
-const video = document.getElementById('dummyVideo');
-if (video) {
-    video.play().catch(e => console.log('Video autoplay prevented:', e));
-}
+// ===== ИМИТАЦИЯ АКТИВНОСТИ (БОРЬБА СО СКРИНСЕЙВЕРОМ) =====
+(function() {
+    // Функция для "шевеления мышью" каждые 30 секунд
+    function simulateActivity() {
+        window.dispatchEvent(new Event('mousemove'));
+        window.dispatchEvent(new Event('scroll'));
+        console.log('Activity simulated at', new Date().toLocaleTimeString());
+    }
+    
+    // Запускаем имитацию каждые 25 секунд
+    setInterval(simulateActivity, 25000);
+    
+    // Также реагируем на реальные события
+    window.addEventListener('load', simulateActivity);
+    window.addEventListener('focus', simulateActivity);
+    document.addEventListener('click', simulateActivity);
+})();
 
-const targetDate = new Date(2026, 6, 29);
+// ===== ОСНОВНОЙ ТАЙМЕР =====
+(function(){
+const targetDate = new Date(2026, 6, 29); // 29 июля 2026
 
 function format(n){return n<10?'0'+n:n;}
 
-function decline(n,words){
-const mod100=n%100;
-const mod10=n%10;
-if(mod100>4&&mod100<20)return words[2];
-if(mod10===1)return words[0];
-if(mod10>1&&mod10<5)return words[1];
-return words[2];
+function decline(n, words){
+    const mod100 = n % 100;
+    const mod10 = n % 10;
+    if(mod100 > 4 && mod100 < 20) return words[2];
+    if(mod10 === 1) return words[0];
+    if(mod10 > 1 && mod10 < 5) return words[1];
+    return words[2];
 }
 
 function update(){
-const now=new Date();
-const diff=targetDate-now;
-let d=0,h=0,m=0;
-if(diff>0){
-d=Math.floor(diff/(1000*60*60*24));
-h=Math.floor((diff/(1000*60*60))%24);
-m=Math.floor((diff/(1000*60))%60);
+    const now = new Date();
+    const diff = targetDate - now;
+    let d = 0, h = 0, m = 0;
+    if(diff > 0){
+        d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        m = Math.floor((diff / (1000 * 60)) % 60);
+    }
+    
+    // Обновляем цифры
+    document.getElementById('days').textContent = format(d);
+    document.getElementById('hours').textContent = format(h);
+    document.getElementById('minutes').textContent = format(m);
+    
+    // Обновляем подписи со склонениями
+    document.getElementById('days-label').textContent = decline(d, ['день','дня','дней']);
+    document.getElementById('hours-label').textContent = decline(h, ['час','часа','часов']);
+    document.getElementById('minutes-label').textContent = decline(m, ['минута','минуты','минут']);
+    
+    // Каждое обновление таймера тоже имитирует активность
+    simulateActivity();
 }
-document.getElementById('days').textContent=format(d);
-document.getElementById('hours').textContent=format(h);
-document.getElementById('minutes').textContent=format(m);
-document.getElementById('days-label').textContent=decline(d,['день','дня','дней']);
-document.getElementById('hours-label').textContent=decline(h,['час','часа','часов']);
-document.getElementById('minutes-label').textContent=decline(m,['минута','минуты','минут']);
-}
+
 update();
-setInterval(update,1000);
+setInterval(update, 1000);
 })();
 </script>
 </body>

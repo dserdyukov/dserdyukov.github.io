@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,7 +10,7 @@
 /* ===== ПОДКЛЮЧАЕМ ВАШ ШРИФТ ===== */
 @font-face {
     font-family: 'PHGTL';
-    src: url('/fonts/PHGTL.ttf') format('truetype');
+    src: url('https://dserdyukov.github.io/fonts/PHGTL.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -22,9 +23,9 @@ body{
     height:100vh;
     overflow:hidden;
     display:flex;
-    align-items:flex-start;  /* прижимаем к верху */
+    align-items:flex-start;
     justify-content:center;
-    font-family:'PHGTL', 'Orbitron', sans-serif;  /* Ваш шрифт теперь первый */
+    font-family:'PHGTL', 'Orbitron', sans-serif;
     color:#fff;
     position:relative;
     background:#070b18;
@@ -35,7 +36,9 @@ body{
     position:absolute;
     inset:0;
     z-index:0;
-    background-image:url('https://raw.githubusercontent.com/dserdyukov/dserdyukov.github.io/main/IMG_20260225_165332_463.jpg');
+    /* Резервный цвет, если изображение не загрузится */
+    background-color: #070b18;
+    /* Само изображение устанавливается через JavaScript после проверки */
     background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
@@ -52,12 +55,9 @@ body{
     backdrop-filter:blur(10px);
     background:rgba(10,15,35,0.2);
     box-shadow:0 0 40px rgba(0,255,255,0.4);
-    
-    /* Сдвигаем в нижнюю треть экрана */
-    margin-top: 60vh;  /* 60% высоты экрана сверху = нижняя треть */
+    margin-top: 60vh;
 }
 
-/* Адаптация для разных экранов */
 @media (max-height: 800px) {
     .container {
         margin-top: 55vh;
@@ -88,7 +88,6 @@ body{
     align-items:center;
 }
 
-/* ===== КОМПАКТНЫЕ ПУЗЫРИ ===== */
 .timer span{
     display:inline-block;
     background:rgba(0,0,0,0.4);
@@ -101,7 +100,6 @@ body{
     vertical-align:middle;
 }
 
-/* Подписи */
 .labels{
     font-size:clamp(0.9rem,1.8vw,1.3rem);
     color:#fff;
@@ -118,14 +116,11 @@ body{
 .labels:last-of-type {
     margin-right:0;
 }
-
-/* ===================== SVG СТИЛИ (УДАЛЕНЫ) ===================== */
-/* Весь блок .players полностью удалён */
 </style>
 </head>
 <body>
 
-<!-- Ваша картинка на фоне -->
+<!-- Ваша картинка на фоне (управляется CSS + JS) -->
 <div class="bg-custom"></div>
 
 <!-- Таймер -->
@@ -140,6 +135,7 @@ body{
 
 <script>
 (function(){
+// ===== ТАЙМЕР =====
 const targetDate=new Date(2026,6,29);
 
 function format(n){return n<10?'0'+n:n;}
@@ -171,6 +167,31 @@ document.getElementById('minutes-label').textContent=decline(m,['минута','
 }
 update();
 setInterval(update,1000);
+
+// ===== ЗАГРУЗКА ФОНОВОГО ИЗОБРАЖЕНИЯ С ПРОВЕРКОЙ =====
+(function() {
+    var bgDiv = document.querySelector('.bg-custom');
+    var imgUrl = 'https://raw.githubusercontent.com/dserdyukov/dserdyukov.github.io/main/IMG_20260225_165332_463.jpg';
+
+    // Пытаемся предзагрузить изображение
+    var testImg = new Image();
+    testImg.onload = function() {
+        // Если загрузилось успешно — ставим фон
+        bgDiv.style.backgroundImage = 'url(' + imgUrl + ')';
+    };
+    testImg.onerror = function() {
+        // Если ошибка — оставляем только цвет (уже задан в CSS)
+        console.log('Не удалось загрузить фоновое изображение, используется цвет.');
+    };
+    testImg.src = imgUrl;
+})();
+
+// ===== ПЕРЕЗАГРУЗКА СТРАНИЦЫ КАЖДУЮ МИНУТУ (для предотвращения сна ТВ) =====
+setInterval(function() {
+    var url = window.location.href.split('?')[0] + '?t=' + Date.now();
+    window.location.replace(url);
+}, 60000);
+
 })();
 </script>
 </body>

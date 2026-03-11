@@ -28,15 +28,14 @@ body{
     height:100vh;
     overflow:hidden;
     display:flex;
-    align-items:flex-start;  /* прижимаем к верху */
+    align-items:flex-start;
     justify-content:center;
-    font-family:'PHGTL', 'Orbitron', sans-serif;  /* Ваш шрифт теперь первый */
+    font-family:'PHGTL', 'Orbitron', sans-serif;
     color:#fff;
     position:relative;
     background:#070b18;
 }
 
-/* ===================== ФОН — ВАША КАРТИНКА ===================== */
 .bg-custom{
     position:absolute;
     inset:0;
@@ -47,7 +46,6 @@ body{
     background-repeat:no-repeat;
 }
 
-/* ===================== КОНТЕЙНЕР С ТАЙМЕРОМ ===================== */
 .container{
     position:relative;
     z-index:10;
@@ -58,24 +56,14 @@ body{
     backdrop-filter:blur(10px);
     background:rgba(10,15,35,0.2);
     box-shadow:0 0 40px rgba(0,255,255,0.4);
-    
-    /* Сдвигаем в нижнюю треть экрана */
-    margin-top: 60vh;  /* 60% высоты экрана сверху = нижняя треть */
+    margin-top: 60vh;
 }
 
-/* Адаптация для разных экранов */
 @media (max-height: 800px) {
-    .container {
-        margin-top: 55vh;
-        padding: 25px 40px;
-    }
+    .container { margin-top: 55vh; padding: 25px 40px; }
 }
-
 @media (max-height: 600px) {
-    .container {
-        margin-top: 50vh;
-        padding: 20px 30px;
-    }
+    .container { margin-top: 50vh; padding: 20px 30px; }
 }
 
 .title{
@@ -94,7 +82,6 @@ body{
     align-items:center;
 }
 
-/* ===== КОМПАКТНЫЕ ПУЗЫРИ ===== */
 .timer span{
     display:inline-block;
     background:rgba(0,0,0,0.4);
@@ -107,7 +94,6 @@ body{
     vertical-align:middle;
 }
 
-/* Подписи */
 .labels{
     font-size:clamp(0.9rem,1.8vw,1.3rem);
     color:#fff;
@@ -121,17 +107,13 @@ body{
     vertical-align:middle;
 }
 
-.labels:last-of-type {
-    margin-right:0;
-}
+.labels:last-of-type { margin-right:0; }
 </style>
 </head>
 <body>
 
-<!-- Ваша картинка на фоне -->
 <div class="bg-custom"></div>
 
-<!-- Таймер -->
 <div class="container">
     <div class="title">До Игр Будущего 2026 осталось</div>
     <div class="timer">
@@ -142,19 +124,23 @@ body{
 </div>
 
 <script>
-// ===== ИМИТАЦИЯ АКТИВНОСТИ (БОРЬБА СО СКРИНСЕЙВЕРОМ) =====
-(function() {
-    // Функция для "шевеления мышью" каждые 30 секунд
-    function simulateActivity() {
+// ===== ОБЩАЯ ФУНКЦИЯ ИМИТАЦИИ АКТИВНОСТИ =====
+function simulateActivity() {
+    try {
         window.dispatchEvent(new Event('mousemove'));
         window.dispatchEvent(new Event('scroll'));
         console.log('Activity simulated at', new Date().toLocaleTimeString());
+    } catch (e) {
+        // игнорируем ошибки
     }
-    
+}
+
+// ===== БЛОК ИМИТАЦИИ АКТИВНОСТИ =====
+(function() {
     // Запускаем имитацию каждые 25 секунд
     setInterval(simulateActivity, 25000);
     
-    // Также реагируем на реальные события
+    // Реагируем на реальные события
     window.addEventListener('load', simulateActivity);
     window.addEventListener('focus', simulateActivity);
     document.addEventListener('click', simulateActivity);
@@ -176,27 +162,29 @@ function decline(n, words){
 }
 
 function update(){
-    const now = new Date();
-    const diff = targetDate - now;
-    let d = 0, h = 0, m = 0;
-    if(diff > 0){
-        d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        m = Math.floor((diff / (1000 * 60)) % 60);
+    try {
+        const now = new Date();
+        const diff = targetDate - now;
+        let d = 0, h = 0, m = 0;
+        if(diff > 0){
+            d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            m = Math.floor((diff / (1000 * 60)) % 60);
+        }
+        
+        document.getElementById('days').textContent = format(d);
+        document.getElementById('hours').textContent = format(h);
+        document.getElementById('minutes').textContent = format(m);
+        
+        document.getElementById('days-label').textContent = decline(d, ['день','дня','дней']);
+        document.getElementById('hours-label').textContent = decline(h, ['час','часа','часов']);
+        document.getElementById('minutes-label').textContent = decline(m, ['минута','минуты','минут']);
+        
+        // Имитируем активность при каждом обновлении
+        simulateActivity();
+    } catch (e) {
+        console.error('Ошибка в update:', e);
     }
-    
-    // Обновляем цифры
-    document.getElementById('days').textContent = format(d);
-    document.getElementById('hours').textContent = format(h);
-    document.getElementById('minutes').textContent = format(m);
-    
-    // Обновляем подписи со склонениями
-    document.getElementById('days-label').textContent = decline(d, ['день','дня','дней']);
-    document.getElementById('hours-label').textContent = decline(h, ['час','часа','часов']);
-    document.getElementById('minutes-label').textContent = decline(m, ['минута','минуты','минут']);
-    
-    // Каждое обновление таймера тоже имитирует активность
-    simulateActivity();
 }
 
 update();
